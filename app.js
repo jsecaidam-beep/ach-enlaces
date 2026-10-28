@@ -15,10 +15,19 @@ contactForm.addEventListener('submit',(event)=>{
  if(!contactForm.reportValidity())return;
  const data=new FormData(contactForm);
  if(data.get('_honey'))return;
- const subject='Contacto ACH · '+data.get('pais');
- const body='Nombre: '+data.get('name')+'\r\nCorreo de contacto: '+data.get('email')+'\r\nPaís: '+data.get('pais')+'\r\n\r\nMensaje:\r\n'+data.get('message');
+ const country=data.get('pais')==='Otro'?String(data.get('otro_pais')||'').trim():data.get('pais');
+ const subject='Contacto ACH · '+country;
+ const body='Nombre: '+data.get('name')+'\r\nCorreo de contacto: '+data.get('email')+'\r\nPaís: '+country+'\r\n\r\nMensaje:\r\n'+data.get('message');
  const url='mailto:jsecaida@ca.acfspain.org?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
  const status=document.querySelector('#form-status');
  status.textContent='Gracias por ponerte en contacto. Envía el mensaje desde tu aplicación de correo para completar el contacto. Cuando lo recibamos, nuestro equipo te dará seguimiento pronto. Si la aplicación no se abre, puedes escribir a jsecaida@ca.acfspain.org o llamarnos.';
  window.location.href=url;
 });
+
+const countrySelect=contactForm.querySelector('[name="pais"]');
+const otherCountryField=document.querySelector('#other-country-field');
+const otherCountryInput=otherCountryField.querySelector('input');
+function updateOtherCountry(){const show=countrySelect.value==='Otro';otherCountryField.hidden=!show;otherCountryInput.disabled=!show;otherCountryInput.required=show;if(!show)otherCountryInput.setCustomValidity('')}
+countrySelect.addEventListener('change',()=>{updateOtherCountry();if(!otherCountryField.hidden)otherCountryInput.focus()});
+otherCountryInput.addEventListener('input',()=>otherCountryInput.setCustomValidity(otherCountryInput.value.trim()?'':'Escribe el nombre de tu país.'));
+updateOtherCountry();
