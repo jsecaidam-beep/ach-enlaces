@@ -31,3 +31,16 @@ function updateOtherCountry(){const show=countrySelect.value==='Otro';otherCount
 countrySelect.addEventListener('change',()=>{updateOtherCountry();if(!otherCountryField.hidden)otherCountryInput.focus()});
 otherCountryInput.addEventListener('input',()=>otherCountryInput.setCustomValidity(otherCountryInput.value.trim()?'':'Escribe el nombre de tu país.'));
 updateOtherCountry();
+
+// One-time entrance effects; content remains visible without JavaScript.
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+if(!reducedMotion.matches){
+ document.querySelectorAll('.intro,.links').forEach(el=>el.classList.add('motion-enter'));
+ if('IntersectionObserver' in window){
+  const revealObserver=new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){entry.target.classList.add('motion-visible');revealObserver.unobserve(entry.target)}}},{threshold:.08});
+  document.querySelectorAll('.contact-heading,.phone-panel,.form-panel').forEach(el=>revealObserver.observe(el));
+ }
+}
+
+const motionToggle=document.querySelector('#motion-toggle');
+motionToggle.addEventListener('click',()=>{const paused=document.body.classList.toggle('motion-paused');motionToggle.setAttribute('aria-pressed',String(paused));motionToggle.textContent=paused?'Activar movimiento':'Pausar movimiento'});
